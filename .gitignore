@@ -13,5 +13,3 @@ build/
 # Build artifacts
 test_ffi
 
-# Static libraries (built from hwpjs)
-libs/*.a

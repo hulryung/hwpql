@@ -23,32 +23,16 @@ scripts/build-rust.sh  # Script to rebuild the static library
 
 - macOS 13.0+
 - Xcode 15+
-- Rust toolchain (for building `libhwp_ffi.a`)
-- [hwpjs](https://github.com/ohah/hwpjs) repository cloned alongside this project
 
 ## Build
-
-### 1. Build the Rust static library
-
-```bash
-./scripts/build-rust.sh
-```
-
-Or manually:
-
-```bash
-cd ../hwpjs
-cargo build --release -p hwp-ffi
-cp target/release/libhwp_ffi.a ../hwpql/libs/
-```
-
-### 2. Build the Xcode project
 
 ```bash
 xcodebuild -project HWPQuickLook.xcodeproj -scheme HWPQuickLook -configuration Release build
 ```
 
-### 3. Install
+Pre-built `libhwp_ffi.a` is included in `libs/`. To rebuild it from source, see [Rebuilding the Rust library](#rebuilding-the-rust-library).
+
+### Install
 
 Copy the built app to `/Applications`:
 
@@ -67,6 +51,14 @@ qlmanage -r cache
 
 ```bash
 qlmanage -p ~/path/to/file.hwp
+```
+
+## Rebuilding the Rust library
+
+Requires Rust toolchain and [hwpjs](https://github.com/ohah/hwpjs) cloned alongside this project.
+
+```bash
+./scripts/build-rust.sh
 ```
 
 ## License
