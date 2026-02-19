@@ -19,20 +19,31 @@ libs/                  # Pre-built static library (libhwp_ffi.a)
 scripts/build-rust.sh  # Script to rebuild the static library
 ```
 
+## Install
+
+### Homebrew (recommended)
+
+```bash
+brew install hulryung/tap/hwpquicklook
+```
+
+### Manual
+
+Download `HWPQuickLook.zip` from [Releases](https://github.com/hulryung/hwpql/releases), extract, and move `HWPQuickLook.app` to `/Applications`.
+
 ## Requirements
 
-- macOS 13.0+
-- Xcode 15+
+- macOS 12.0+
 
-## Build
+## Build from Source
+
+Requires Xcode 15+.
 
 ```bash
 xcodebuild -project HWPQuickLook.xcodeproj -scheme HWPQuickLook -configuration Release build
 ```
 
 Pre-built `libhwp_ffi.a` is included in `libs/`. To rebuild it from source, see [Rebuilding the Rust library](#rebuilding-the-rust-library).
-
-### Install
 
 Copy the built app to `/Applications`:
 
