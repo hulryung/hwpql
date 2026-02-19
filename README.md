@@ -55,10 +55,29 @@ qlmanage -p ~/path/to/file.hwp
 
 ## Rebuilding the Rust library
 
-Requires Rust toolchain and [hwpjs](https://github.com/ohah/hwpjs) cloned alongside this project.
+Pre-built `libhwp_ffi.a`가 `libs/`에 포함되어 있으므로 일반적으로 이 과정은 필요하지 않습니다. hwp-core를 수정하거나 최신 버전으로 업데이트할 때만 필요합니다.
+
+### Requirements
+
+- [Rust toolchain](https://rustup.rs/)
+- [hwpjs](https://github.com/ohah/hwpjs) 저장소
+
+### Steps
 
 ```bash
+# 1. hwpjs 저장소 클론 (이 프로젝트와 같은 디렉토리에)
+git clone https://github.com/ohah/hwpjs.git ../hwpjs
+
+# 2. 빌드 스크립트 실행
 ./scripts/build-rust.sh
+```
+
+또는 수동으로:
+
+```bash
+cd ../hwpjs
+cargo build --release -p hwp-ffi
+cp target/release/libhwp_ffi.a ../hwpql/libs/
 ```
 
 ## License
