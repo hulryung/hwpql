@@ -1,0 +1,601 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000001 /* AppDelegate.swift */; };
+		A1000003 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A2000003 /* Assets.xcassets */; };
+		A1000010 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000010 /* PreviewProvider.swift */; };
+		A1000020 /* ThumbnailProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000020 /* ThumbnailProvider.swift */; };
+		A1000030 /* HWPPreviewer.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A3000010 /* HWPPreviewer.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A1000031 /* HWPThumbnailer.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A3000020 /* HWPThumbnailer.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		A1000040 /* libhwp_ffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2000040 /* libhwp_ffi.a */; };
+		A1000041 /* libhwp_ffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2000040 /* libhwp_ffi.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A4000010 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A5000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A3000011 /* HWPPreviewer */;
+			remoteInfo = HWPPreviewer;
+		};
+		A4000020 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A5000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A3000021 /* HWPThumbnailer */;
+			remoteInfo = HWPThumbnailer;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A6000001 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				A1000030 /* HWPPreviewer.appex in Embed Foundation Extensions */,
+				A1000031 /* HWPThumbnailer.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		A2000001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		A2000003 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A2000004 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A2000005 /* HWPQuickLook.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HWPQuickLook.entitlements; sourceTree = "<group>"; };
+		A2000010 /* PreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewProvider.swift; sourceTree = "<group>"; };
+		A2000011 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A2000012 /* HWPPreviewer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HWPPreviewer.entitlements; sourceTree = "<group>"; };
+		A2000020 /* ThumbnailProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailProvider.swift; sourceTree = "<group>"; };
+		A2000021 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A2000022 /* HWPThumbnailer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HWPThumbnailer.entitlements; sourceTree = "<group>"; };
+		A2000030 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
+		A2000040 /* libhwp_ffi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libhwp_ffi.a; sourceTree = "<group>"; };
+		A3000001 /* HWPQuickLook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HWPQuickLook.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A3000010 /* HWPPreviewer.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HWPPreviewer.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A3000020 /* HWPThumbnailer.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HWPThumbnailer.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A7000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A7000010 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000040 /* libhwp_ffi.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A7000020 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000041 /* libhwp_ffi.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A8000000 /* root */ = {
+			isa = PBXGroup;
+			children = (
+				A8000001 /* HWPQuickLook */,
+				A8000010 /* HWPPreviewer */,
+				A8000020 /* HWPThumbnailer */,
+				A8000030 /* Shared */,
+				A8000040 /* libs */,
+				A8000099 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A8000001 /* HWPQuickLook */ = {
+			isa = PBXGroup;
+			children = (
+				A2000001 /* AppDelegate.swift */,
+				A2000003 /* Assets.xcassets */,
+				A2000004 /* Info.plist */,
+				A2000005 /* HWPQuickLook.entitlements */,
+			);
+			path = HWPQuickLook;
+			sourceTree = "<group>";
+		};
+		A8000010 /* HWPPreviewer */ = {
+			isa = PBXGroup;
+			children = (
+				A2000010 /* PreviewProvider.swift */,
+				A2000011 /* Info.plist */,
+				A2000012 /* HWPPreviewer.entitlements */,
+			);
+			path = HWPPreviewer;
+			sourceTree = "<group>";
+		};
+		A8000020 /* HWPThumbnailer */ = {
+			isa = PBXGroup;
+			children = (
+				A2000020 /* ThumbnailProvider.swift */,
+				A2000021 /* Info.plist */,
+				A2000022 /* HWPThumbnailer.entitlements */,
+			);
+			path = HWPThumbnailer;
+			sourceTree = "<group>";
+		};
+		A8000030 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				A2000030 /* BridgingHeader.h */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		A8000040 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				A2000040 /* libhwp_ffi.a */,
+			);
+			path = libs;
+			sourceTree = "<group>";
+		};
+		A8000099 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A3000001 /* HWPQuickLook.app */,
+				A3000010 /* HWPPreviewer.appex */,
+				A3000020 /* HWPThumbnailer.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A3000002 /* HWPQuickLook */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A9000001 /* Build configuration list for PBXNativeTarget "HWPQuickLook" */;
+			buildPhases = (
+				A7100001 /* Sources */,
+				A7000001 /* Frameworks */,
+				A7200001 /* Resources */,
+				A6000001 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A4100010 /* PBXTargetDependency */,
+				A4100020 /* PBXTargetDependency */,
+			);
+			name = HWPQuickLook;
+			productName = HWPQuickLook;
+			productReference = A3000001 /* HWPQuickLook.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A3000011 /* HWPPreviewer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A9000010 /* Build configuration list for PBXNativeTarget "HWPPreviewer" */;
+			buildPhases = (
+				A7100010 /* Sources */,
+				A7000010 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HWPPreviewer;
+			productName = HWPPreviewer;
+			productReference = A3000010 /* HWPPreviewer.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		A3000021 /* HWPThumbnailer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A9000020 /* Build configuration list for PBXNativeTarget "HWPThumbnailer" */;
+			buildPhases = (
+				A7100020 /* Sources */,
+				A7000020 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HWPThumbnailer;
+			productName = HWPThumbnailer;
+			productReference = A3000020 /* HWPThumbnailer.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A5000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+				TargetAttributes = {
+					A3000002 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					A3000011 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					A3000021 = {
+						CreatedOnToolsVersion = 15.4;
+					};
+				};
+			};
+			buildConfigurationList = A9000000 /* Build configuration list for PBXProject "HWPQuickLook" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A8000000 /* root */;
+			productRefGroup = A8000099 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A3000002 /* HWPQuickLook */,
+				A3000011 /* HWPPreviewer */,
+				A3000021 /* HWPThumbnailer */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A7200001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000003 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A7100001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000001 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A7100010 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000010 /* PreviewProvider.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A7100020 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000020 /* ThumbnailProvider.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A4100010 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A3000011 /* HWPPreviewer */;
+			targetProxy = A4000010 /* PBXContainerItemProxy */;
+		};
+		A4100020 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A3000021 /* HWPThumbnailer */;
+			targetProxy = A4000020 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		B1000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		B1000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		B2000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = HWPQuickLook/HWPQuickLook.entitlements;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = XGJ87M8ZZR;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = HWPQuickLook/Info.plist;
+				INFOPLIST_KEY_NSMainStoryboardFile = "";
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libs",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hwpql.HWPQuickLook;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = Shared/BridgingHeader.h;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B2000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = HWPQuickLook/HWPQuickLook.entitlements;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = XGJ87M8ZZR;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = HWPQuickLook/Info.plist;
+				INFOPLIST_KEY_NSMainStoryboardFile = "";
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libs",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hwpql.HWPQuickLook;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = Shared/BridgingHeader.h;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		B3000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = HWPPreviewer/HWPPreviewer.entitlements;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = XGJ87M8ZZR;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = HWPPreviewer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libs",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hwpql.HWPQuickLook.HWPPreviewer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = Shared/BridgingHeader.h;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B3000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = HWPPreviewer/HWPPreviewer.entitlements;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = XGJ87M8ZZR;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = HWPPreviewer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libs",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hwpql.HWPQuickLook.HWPPreviewer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = Shared/BridgingHeader.h;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		B4000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = HWPThumbnailer/HWPThumbnailer.entitlements;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = XGJ87M8ZZR;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = HWPThumbnailer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libs",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hwpql.HWPQuickLook.HWPThumbnailer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = Shared/BridgingHeader.h;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B4000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = HWPThumbnailer/HWPThumbnailer.entitlements;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = XGJ87M8ZZR;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = HWPThumbnailer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/libs",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.hwpql.HWPQuickLook.HWPThumbnailer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = Shared/BridgingHeader.h;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A9000000 /* Build configuration list for PBXProject "HWPQuickLook" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1000001 /* Debug */,
+				B1000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A9000001 /* Build configuration list for PBXNativeTarget "HWPQuickLook" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B2000001 /* Debug */,
+				B2000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A9000010 /* Build configuration list for PBXNativeTarget "HWPPreviewer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3000001 /* Debug */,
+				B3000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A9000020 /* Build configuration list for PBXNativeTarget "HWPThumbnailer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B4000001 /* Debug */,
+				B4000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = A5000001 /* Project object */;
+}
