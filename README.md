@@ -2,6 +2,8 @@
 
 macOS Quick Look plugin for HWP (한글) documents. Press Space in Finder to preview `.hwp` and `.hwpx` files.
 
+![Quick Look Preview](assets/screenshot.png)
+
 ## How It Works
 
 HWP files are parsed and rendered as HTML using the [hwp-core](https://github.com/ohah/hwpjs) Rust library via C FFI. The Quick Look extension receives the file data, calls `hwp_parse_to_html()`, and returns the resulting HTML to the system for display.
