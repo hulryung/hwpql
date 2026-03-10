@@ -67,5 +67,21 @@
             </dict>
         </dict>
     </array>
+    <key>CFBundleDocumentTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>HWP Document</string>
+            <key>CFBundleTypeRole</key>
+            <string>Viewer</string>
+            <key>LSHandlerRank</key>
+            <string>Default</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>com.hancom.hwp</string>
+                <string>com.hancom.hwpx</string>
+            </array>
+        </dict>
+    </array>
 </dict>
 </plist>
