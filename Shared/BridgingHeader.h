@@ -13,6 +13,7 @@
 #define HWP_ERROR_PANIC -3
 #define HWP_ERROR_NO_PREVIEW_IMAGE -4
 #define HWP_ERROR_BASE64_DECODE_FAILED -5
+#define HWP_ERROR_UNKNOWN_FORMAT -6
 
 // Parse HWP file data and convert to HTML
 int32_t hwp_parse_to_html(const uint8_t *data,
