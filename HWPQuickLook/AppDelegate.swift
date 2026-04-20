@@ -11,21 +11,96 @@ struct HWPQuickLookApp: App {
             EmptyView()
         }
         .commands {
-            CommandGroup(replacing: .newItem) {
-                Button("Open…") {
-                    appDelegate.openFileAction(nil)
-                }
-                .keyboardShortcut("o", modifiers: [.command])
-
-                // Placeholder; AppDelegate replaces this with a live Open Recent menu
-                // after launch via NSApp.mainMenu manipulation, since SwiftUI does
-                // not natively support dynamic menu contents driven by NSDocumentController.
-            }
+            HWPCommands(
+                state: appDelegate.state,
+                openFile: { appDelegate.openFileAction(nil) },
+                openURL: { appDelegate.openHWPFile($0) },
+                printCurrent: { appDelegate.printAction(nil) }
+            )
         }
     }
 }
 
+// MARK: - App state (SwiftUI-observable)
+
+final class AppState: ObservableObject {
+    @Published private(set) var recentDocuments: [URL] = []
+
+    private let storageKey = "RecentDocuments"
+    private let maxEntries = 10
+
+    init() {
+        let paths = UserDefaults.standard.stringArray(forKey: storageKey) ?? []
+        self.recentDocuments = paths.map { URL(fileURLWithPath: $0) }
+    }
+
+    func add(_ url: URL) {
+        var list = recentDocuments
+        list.removeAll { $0.path == url.path }
+        list.insert(url, at: 0)
+        if list.count > maxEntries {
+            list = Array(list.prefix(maxEntries))
+        }
+        recentDocuments = list
+        persist()
+        NSDocumentController.shared.noteNewRecentDocumentURL(url)
+    }
+
+    func removeMissing(_ url: URL) {
+        recentDocuments.removeAll { $0.path == url.path }
+        persist()
+    }
+
+    func clear() {
+        recentDocuments = []
+        persist()
+        NSDocumentController.shared.clearRecentDocuments(nil)
+    }
+
+    private func persist() {
+        UserDefaults.standard.set(recentDocuments.map(\.path), forKey: storageKey)
+    }
+}
+
+// MARK: - Commands (SwiftUI menus)
+
+struct HWPCommands: Commands {
+    @ObservedObject var state: AppState
+    let openFile: () -> Void
+    let openURL: (URL) -> Void
+    let printCurrent: () -> Void
+
+    var body: some Commands {
+        CommandGroup(replacing: .newItem) {
+            Button("Open…") { openFile() }
+                .keyboardShortcut("o", modifiers: [.command])
+
+            Menu("Open Recent") {
+                if state.recentDocuments.isEmpty {
+                    Text("No Recent Documents")
+                } else {
+                    ForEach(state.recentDocuments, id: \.self) { url in
+                        Button(url.lastPathComponent) { openURL(url) }
+                    }
+                    Divider()
+                    Button("Clear Menu") { state.clear() }
+                }
+            }
+        }
+        CommandGroup(replacing: .printItem) {
+            Button("Print…") { printCurrent() }
+                .keyboardShortcut("p", modifiers: [.command])
+        }
+    }
+}
+
+// MARK: - Info window content
+
 struct InfoView: View {
+    var onDrop: ([URL]) -> Void = { _ in }
+
+    @State private var isTargeted = false
+
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "doc.text.magnifyingglass")
@@ -34,28 +109,48 @@ struct InfoView: View {
             Text("HWP Quick Look")
                 .font(.title)
                 .fontWeight(.semibold)
-            Text("Preview .hwp and .hwpx files in Finder.\nSelect a file and press Space, or double-click to open.")
+            Text("Preview .hwp and .hwpx files in Finder.\nSelect a file and press Space, or drop a file here to open.")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
         }
         .padding(40)
         .frame(minWidth: 480, minHeight: 320)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .strokeBorder(Color.accentColor, lineWidth: isTargeted ? 3 : 0)
+                .padding(12)
+        )
+        .onDrop(of: [.fileURL], isTargeted: $isTargeted) { providers in
+            var urls: [URL] = []
+            let group = DispatchGroup()
+            for provider in providers {
+                group.enter()
+                _ = provider.loadObject(ofClass: URL.self) { url, _ in
+                    if let url { urls.append(url) }
+                    group.leave()
+                }
+            }
+            group.notify(queue: .main) {
+                onDrop(urls)
+            }
+            return true
+        }
     }
 }
 
-final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
+// MARK: - AppDelegate
+
+final class AppDelegate: NSObject, NSApplicationDelegate {
     private static let supportedExtensions: Set<String> = ["hwp", "hwpx"]
+
+    let state = AppState()
 
     private var viewerWindows: [NSWindow] = []
     private var infoWindow: NSWindow?
 
-    func applicationDidFinishLaunching(_ notification: Notification) {
-        // SwiftUI builds its own menu bar asynchronously; inject the Open Recent
-        // submenu after it finishes. NSMenuDelegate repopulates on each open.
-        DispatchQueue.main.async { [weak self] in
-            self?.installOpenRecentMenu()
-        }
+    // MARK: Lifecycle
 
+    func applicationDidFinishLaunching(_ notification: Notification) {
         // Launch Services routes files via application(_:open:) which fires
         // BEFORE this method; the CLI-arg loop only covers direct binary invocation.
         for arg in ProcessInfo.processInfo.arguments.dropFirst() {
@@ -70,87 +165,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
     }
 
-    // MARK: - Menu bar
-
-    private func installOpenRecentMenu() {
-        guard let fileMenu = NSApp.mainMenu?.items.first(where: { $0.submenu?.title == "File" })?.submenu else {
-            return
-        }
-        // Avoid double-inserting if this runs more than once.
-        if fileMenu.items.contains(where: { $0.title == "Open Recent" }) {
-            return
-        }
-
-        let openRecentItem = NSMenuItem(title: "Open Recent", action: nil, keyEquivalent: "")
-        let openRecentMenu = NSMenu(title: "Open Recent")
-        openRecentMenu.delegate = self
-        openRecentItem.submenu = openRecentMenu
-
-        // Insert right after the Open… item if present, otherwise at top.
-        let openIndex = fileMenu.items.firstIndex { $0.title.hasPrefix("Open") } ?? -1
-        fileMenu.insertItem(openRecentItem, at: openIndex + 1)
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        return true
     }
 
-    @objc func openFileAction(_ sender: Any?) {
-        let panel = NSOpenPanel()
-        panel.allowsMultipleSelection = true
-        panel.canChooseDirectories = false
-        panel.canChooseFiles = true
-        panel.allowedContentTypes = Self.supportedExtensions.compactMap { ext in
-            UTType(filenameExtension: ext)
-        }
-        guard panel.runModal() == .OK else { return }
-        for url in panel.urls {
-            openHWPFile(url)
-        }
-    }
-
-    @objc private func openRecentDocumentAction(_ sender: NSMenuItem) {
-        guard let url = sender.representedObject as? URL else { return }
-        if FileManager.default.fileExists(atPath: url.path) {
-            openHWPFile(url)
-        } else {
-            showError("File no longer exists:\n\(url.path)")
-        }
-    }
-
-    @objc private func clearRecentDocumentsAction(_ sender: Any?) {
-        NSDocumentController.shared.clearRecentDocuments(sender)
-    }
-
-    // NSMenuDelegate: populate Open Recent just before display
-    func menuNeedsUpdate(_ menu: NSMenu) {
-        guard menu.title == "Open Recent" else { return }
-        menu.removeAllItems()
-
-        let recents = NSDocumentController.shared.recentDocumentURLs
-        if recents.isEmpty {
-            let empty = NSMenuItem(title: "No Recent Documents", action: nil, keyEquivalent: "")
-            empty.isEnabled = false
-            menu.addItem(empty)
-            return
-        }
-
-        for url in recents {
-            let item = NSMenuItem(title: url.lastPathComponent,
-                                  action: #selector(openRecentDocumentAction(_:)),
-                                  keyEquivalent: "")
-            item.representedObject = url
-            item.target = self
-            menu.addItem(item)
-        }
-        menu.addItem(.separator())
-        let clear = NSMenuItem(title: "Clear Menu",
-                               action: #selector(clearRecentDocumentsAction(_:)),
-                               keyEquivalent: "")
-        clear.target = self
-        menu.addItem(clear)
-    }
+    // MARK: File opening entry points
 
     func application(_ sender: NSApplication, open urls: [URL]) {
-        for url in urls {
-            openHWPFile(url)
-        }
+        for url in urls { openHWPFile(url) }
     }
 
     func application(_ sender: NSApplication, openFile filename: String) -> Bool {
@@ -159,15 +181,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     func application(_ sender: NSApplication, openFiles filenames: [String]) {
-        for f in filenames {
-            openHWPFile(URL(fileURLWithPath: f))
-        }
+        for f in filenames { openHWPFile(URL(fileURLWithPath: f)) }
         sender.reply(toOpenOrPrint: .success)
     }
 
-    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
-        return true
+    // MARK: Menu actions
+
+    @objc func openFileAction(_ sender: Any?) {
+        let panel = NSOpenPanel()
+        panel.allowsMultipleSelection = true
+        panel.canChooseDirectories = false
+        panel.canChooseFiles = true
+        panel.allowedContentTypes = Self.supportedExtensions.compactMap { UTType(filenameExtension: $0) }
+        guard panel.runModal() == .OK else { return }
+        for url in panel.urls { openHWPFile(url) }
     }
+
+    @objc func printAction(_ sender: Any?) {
+        guard let window = NSApp.keyWindow,
+              let webView = window.contentView?.subviews.compactMap({ $0 as? WKWebView }).first else {
+            NSSound.beep()
+            return
+        }
+        let op = webView.printOperation(with: NSPrintInfo.shared)
+        op.showsPrintPanel = true
+        op.runModal(for: window, delegate: nil, didRun: nil, contextInfo: nil)
+    }
+
+    // MARK: Windows
 
     private func showInfoWindow() {
         let window = NSWindow(
@@ -179,14 +220,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         window.title = "HWP Quick Look"
         window.center()
         window.isReleasedWhenClosed = false
-        window.contentView = NSHostingView(rootView: InfoView())
+        window.contentView = NSHostingView(rootView: InfoView(onDrop: { [weak self] urls in
+            self?.openDroppedURLs(urls)
+        }))
 
         window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
         infoWindow = window
     }
 
-    private func openHWPFile(_ url: URL) {
+    private func openDroppedURLs(_ urls: [URL]) {
+        for url in urls where Self.supportedExtensions.contains(url.pathExtension.lowercased()) {
+            openHWPFile(url)
+        }
+    }
+
+    func openHWPFile(_ url: URL) {
+        // Missing file path from the Open Recent menu: prune and notify.
+        guard FileManager.default.fileExists(atPath: url.path) else {
+            state.removeMissing(url)
+            showError("File no longer exists:\n\(url.path)")
+            return
+        }
+
         let fileData: Data
         do {
             fileData = try Data(contentsOf: url)
@@ -234,6 +290,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         webView.autoresizingMask = [.width, .height]
         webView.loadHTMLString(htmlString, baseURL: nil)
         window.contentView?.addSubview(webView)
+        window.contentView?.registerForDraggedTypes([.fileURL])
 
         window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
@@ -247,7 +304,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             self?.viewerWindows.removeAll { $0 === window }
         }
 
-        NSDocumentController.shared.noteNewRecentDocumentURL(url)
+        state.add(url)
 
         infoWindow?.close()
         infoWindow = nil
