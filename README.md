@@ -97,27 +97,25 @@ xcrun notarytool store-credentials "HWPQuickLook" \
 
 ## Rust 라이브러리 재빌드
 
-[rhwp](https://github.com/edwardkim/rhwp) 저장소를 수정하거나 최신 버전으로 업데이트해야 할 때만 필요합니다.
+FFI 래퍼(`rhwp-ffi/` 크레이트)가 이 저장소에 포함되어 있고, rhwp는 `rhwp-ffi/Cargo.toml`에서 **특정 커밋을 git dependency로 고정**합니다. rhwp 버전 업그레이드나 FFI 인터페이스 변경 시에만 재빌드가 필요합니다.
 
 ### 요구사항
 
 - [Rust toolchain](https://rustup.rs/)
-- [rhwp](https://github.com/edwardkim/rhwp) 저장소를 이 프로젝트와 같은 상위 디렉터리에 클론
 
-### 스크립트 사용
+### rhwp 버전 업데이트 절차
 
-```bash
-git clone https://github.com/edwardkim/rhwp.git ../rhwp
-./scripts/build-rust.sh
-```
+1. `rhwp-ffi/Cargo.toml`의 `rev = "..."` 값을 원하는 새 커밋 SHA로 변경
+2. `./scripts/build-rust.sh` 실행
 
-### 수동 빌드
+스크립트가 자동으로:
+- `rhwp-ffi` 크레이트를 `cargo build --release` (cargo가 rhwp를 pinned rev로 fetch)
+- 산출물을 `libs/libhwp_ffi.a`로 복사
+- `libs/rhwp.lock`에 repo/commit/built_at/sha256/size 기록
 
-```bash
-cd ../rhwp
-cargo build --release -p rhwp-ffi
-cp target/release/librhwp_ffi.a ../hwpql/libs/libhwp_ffi.a
-```
+### 산출물 검증
+
+`scripts/release.sh`는 빌드 시작 전 `libs/libhwp_ffi.a`의 sha256이 `libs/rhwp.lock` 기록과 일치하는지 확인합니다. 불일치면 `scripts/build-rust.sh`를 다시 실행하라는 메시지와 함께 중단됩니다. 이는 누군가 `.a`만 교체하고 rhwp.lock을 업데이트하지 않은 상태를 원천 차단하기 위함입니다.
 
 ## 프로젝트 구조
 
@@ -136,12 +134,19 @@ HWPThumbnailer/            # Finder 썸네일 익스텐션 (.appex)
 └── Info.plist
 
 Shared/BridgingHeader.h    # Rust FFI 선언 (hwp_parse_to_html 등)
-libs/libhwp_ffi.a          # rhwp 정적 라이브러리 (pre-built, arm64+x86_64)
+
+rhwp-ffi/                  # Rust FFI 래퍼 크레이트
+├── src/lib.rs             # hwp_parse_to_html / hwp_get_preview_image 구현
+└── Cargo.toml             # rhwp를 git rev로 pinning
+
+libs/
+├── libhwp_ffi.a           # rhwp-ffi 정적 라이브러리 (pre-built)
+└── rhwp.lock              # 빌드 메타데이터 (commit SHA, sha256, size)
 
 scripts/
-├── build-rust.sh          # rhwp-ffi 크레이트 빌드
+├── build-rust.sh          # rhwp-ffi 빌드 + rhwp.lock 갱신
 ├── make-icon.swift        # 앱 아이콘 프로그래매틱 생성 (CoreGraphics)
-└── release.sh             # 릴리스 파이프라인 (서명·공증·DMG)
+└── release.sh             # 릴리스 파이프라인 (해시 검증 + 서명·공증·DMG)
 ```
 
 ## 테스트 & 문제 해결

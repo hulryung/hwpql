@@ -1,0 +1,11 @@
+[package]
+name = "rhwp-ffi"
+version = "0.1.0"
+edition = "2021"
+description = "C FFI bindings for rhwp HWP parser, used by the hwpql macOS Quick Look plugin."
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+rhwp = { git = "https://github.com/edwardkim/rhwp.git", rev = "846f02a2cef6256f628c9e498ac1e2fa3c42c5cf" }

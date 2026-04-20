@@ -13,3 +13,4 @@ build/
 # Build artifacts
 test_ffi
 
+rhwp-ffi/target/

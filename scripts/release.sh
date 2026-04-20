@@ -12,6 +12,18 @@ APP_PATH="$BUILD_DIR/Build/Products/Release/HWPQuickLook.app"
 DMG_STAGE="$BUILD_DIR/dmg-stage"
 DMG_PATH="$PROJECT_DIR/build/HWPQuickLook-v${VERSION}.dmg"
 
+echo "== Verifying libs/libhwp_ffi.a matches rhwp.lock =="
+EXPECTED=$(awk '/^sha256:/ {print $2}' libs/rhwp.lock)
+ACTUAL=$(shasum -a 256 libs/libhwp_ffi.a | awk '{print $1}')
+if [ "$EXPECTED" != "$ACTUAL" ]; then
+    echo "ERROR: libs/libhwp_ffi.a does not match libs/rhwp.lock" >&2
+    echo "  expected: $EXPECTED" >&2
+    echo "  actual:   $ACTUAL" >&2
+    echo "Run scripts/build-rust.sh to regenerate." >&2
+    exit 1
+fi
+echo "  sha256=${ACTUAL:0:16}… ok"
+
 echo "== Building v${VERSION} =="
 rm -rf "$BUILD_DIR"
 xcodebuild -project HWPQuickLook.xcodeproj \

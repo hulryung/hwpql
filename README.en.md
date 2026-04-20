@@ -97,27 +97,25 @@ Override the profile name with the `NOTARY_PROFILE` environment variable (defaul
 
 ## Rebuilding the Rust Library
 
-Required only when modifying the [rhwp](https://github.com/edwardkim/rhwp) repository or updating to a newer version.
+The FFI wrapper (`rhwp-ffi/` crate) lives inside this repository, and rhwp is pinned to a specific commit as a git dependency in `rhwp-ffi/Cargo.toml`. Rebuild only when upgrading the rhwp version or changing the FFI interface.
 
 ### Requirements
 
 - [Rust toolchain](https://rustup.rs/)
-- [rhwp](https://github.com/edwardkim/rhwp) cloned into the same parent directory as this project
 
-### Using the script
+### How to update the rhwp version
 
-```bash
-git clone https://github.com/edwardkim/rhwp.git ../rhwp
-./scripts/build-rust.sh
-```
+1. Change the `rev = "..."` value in `rhwp-ffi/Cargo.toml` to the desired commit SHA
+2. Run `./scripts/build-rust.sh`
 
-### Manual build
+The script automatically:
+- Runs `cargo build --release` on `rhwp-ffi` (cargo fetches rhwp at the pinned rev)
+- Copies the artifact to `libs/libhwp_ffi.a`
+- Writes `libs/rhwp.lock` with repo / commit / built_at / sha256 / size
 
-```bash
-cd ../rhwp
-cargo build --release -p rhwp-ffi
-cp target/release/librhwp_ffi.a ../hwpql/libs/libhwp_ffi.a
-```
+### Artifact verification
+
+`scripts/release.sh` verifies that the sha256 of `libs/libhwp_ffi.a` matches the recorded value in `libs/rhwp.lock` before starting the build. If they differ, it aborts with a message directing you to rerun `scripts/build-rust.sh`. This prevents a state where someone has replaced the `.a` without updating the lock file.
 
 ## Project Structure
 
@@ -136,12 +134,19 @@ HWPThumbnailer/            # Finder thumbnail extension (.appex)
 └── Info.plist
 
 Shared/BridgingHeader.h    # Rust FFI declarations (hwp_parse_to_html, etc.)
-libs/libhwp_ffi.a          # rhwp static library (pre-built, arm64 + x86_64)
+
+rhwp-ffi/                  # Rust FFI wrapper crate
+├── src/lib.rs             # hwp_parse_to_html / hwp_get_preview_image impls
+└── Cargo.toml             # pins rhwp via git rev
+
+libs/
+├── libhwp_ffi.a           # rhwp-ffi static library (pre-built)
+└── rhwp.lock              # build metadata (commit SHA, sha256, size)
 
 scripts/
-├── build-rust.sh          # Build the rhwp-ffi crate
+├── build-rust.sh          # Build rhwp-ffi and refresh rhwp.lock
 ├── make-icon.swift        # Programmatic app icon generation (CoreGraphics)
-└── release.sh             # Release pipeline (sign + notarize + DMG)
+└── release.sh             # Release pipeline (hash check + sign + notarize + DMG)
 ```
 
 ## Testing & Troubleshooting
