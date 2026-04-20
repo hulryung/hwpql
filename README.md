@@ -1,96 +1,178 @@
 # HWPQuickLook
 
-macOS Quick Look plugin for HWP (한글) documents. Press Space in Finder to preview `.hwp` and `.hwpx` files.
+[English version](README.en.md)
+
+macOS에서 한글(HWP) 문서를 네이티브로 미리보기 할 수 있는 **Quick Look 플러그인 + 독립 뷰어 앱**입니다. Finder에서 `.hwp` / `.hwpx` 파일을 선택하고 스페이스바를 누르면 바로 내용이 렌더링되며, 파일을 더블클릭하면 별도 창에서 열어볼 수도 있습니다. 한컴오피스 설치 없이 동작합니다.
 
 ![Quick Look Preview](assets/screenshot.png)
 
-## How It Works
+## 주요 기능
 
-HWP files are parsed and rendered as HTML using the [hwp-core](https://github.com/ohah/hwpjs) Rust library via C FFI. The Quick Look extension receives the file data, calls `hwp_parse_to_html()`, and returns the resulting HTML to the system for display.
+- **Finder Quick Look 프리뷰** — 스페이스바로 `.hwp` / `.hwpx` 내용 즉시 렌더링 (SVG 기반 고품질)
+- **Finder 썸네일** — 아이콘 크기에서 파일 미리보기 이미지 표시 (HWP 임베디드 프리뷰 이미지 사용)
+- **독립 뷰어 앱** — 더블클릭으로 HWP 파일을 별도 창에서 열어 WebView로 감상
+- **한컴 네이티브 UTI 지원** — `com.haansoft.hancomofficeviewer.mac.hwp/hwpx` 사용, `LSHandlerRank=Owner`로 우선 선점
+- **Notarized Developer ID 서명** — Gatekeeper 경고 없이 설치·실행
 
-## Project Structure
+## 동작 방식
 
-```
-HWPQuickLook/          # Host app (registers UTI types for .hwp/.hwpx)
-HWPPreviewer/          # Quick Look preview extension (.appex)
-HWPThumbnailer/        # Thumbnail extension (.appex)
-Shared/BridgingHeader.h  # C FFI declarations
-libs/                  # Pre-built static library (libhwp_ffi.a)
-scripts/build-rust.sh  # Script to rebuild the static library
-```
+HWP/HWPX 파일은 Rust로 작성된 [rhwp](https://github.com/edwardkim/rhwp) 크레이트에서 파싱됩니다. Swift 측은 C FFI를 통해 다음 함수들을 호출합니다:
 
-## Install
+- `hwp_parse_to_html(data)` → 페이지를 SVG로 렌더링해 HTML로 감싼 문자열 반환 (프리뷰 + 독립 뷰어)
+- `hwp_get_preview_image(data)` → HWP 내부에 저장된 미리보기 이미지 추출 (Finder 썸네일)
 
-### Homebrew (recommended)
+프리뷰 익스텐션(`HWPPreviewer.appex`)은 HTML을 `QLPreviewReply`로 반환해 시스템 Quick Look 패널에 표시되고, 썸네일 익스텐션(`HWPThumbnailer.appex`)은 이미지를 `QLThumbnailReply`로 반환합니다. 독립 뷰어(`HWPQuickLook.app`)는 파일 오픈 이벤트를 받아 `WKWebView`에 HTML을 로드합니다.
+
+> **참고 (v0.3.0~)**: 파싱 엔진이 `hwpjs` → `rhwp`로 전환되었습니다. FFI 시그니처는 호환되며 사용자 입장에서 달라지는 점은 없습니다. 또한 독립 뷰어 앱이 SwiftUI + AppKit 하이브리드 구조로 재작성되어 파일 라우팅 안정성이 개선되었습니다.
+
+## 설치
+
+### Homebrew (권장)
 
 ```bash
 brew install hulryung/tap/hwpquicklook
 ```
 
-### Manual
+(tap에 새 버전이 반영되기까지 며칠 시차가 있을 수 있습니다. 최신을 원하시면 아래 DMG 방식을 사용하세요.)
 
-Download `HWPQuickLook.zip` from [Releases](https://github.com/hulryung/hwpql/releases), extract, and move `HWPQuickLook.app` to `/Applications`.
+### DMG (최신 릴리스)
 
-## Requirements
+1. [Releases](https://github.com/hulryung/hwpql/releases) 페이지에서 `HWPQuickLook-vX.Y.Z.dmg` 다운로드
+2. DMG를 열어 `HWPQuickLook.app`을 `Applications` 폴더로 드래그
+3. Finder에서 `.hwp` 파일 선택 → 스페이스바 → 프리뷰 확인
 
-- macOS 12.0+
+공증이 되어 있어 "확인되지 않은 개발자" 경고 없이 바로 실행됩니다.
 
-## Build from Source
+## 시스템 요구사항
 
-Requires Xcode 15+.
+- macOS 12.0 (Monterey) 이상
+- Apple Silicon 및 Intel 모두 지원
+
+## 직접 빌드하기
+
+Xcode 15 이상이 필요합니다.
 
 ```bash
 xcodebuild -project HWPQuickLook.xcodeproj -scheme HWPQuickLook -configuration Release build
 ```
 
-Pre-built `libhwp_ffi.a` is included in `libs/`. To rebuild it from source, see [Rebuilding the Rust library](#rebuilding-the-rust-library).
-
-Copy the built app to `/Applications`:
+빌드 결과를 시스템에 반영하려면 `/Applications`에 복사 후 Quick Look 캐시를 리셋합니다.
 
 ```bash
 cp -R ~/Library/Developer/Xcode/DerivedData/HWPQuickLook-*/Build/Products/Release/HWPQuickLook.app /Applications/
+qlmanage -r && qlmanage -r cache
 ```
 
-Then reset Quick Look caches:
+미리 빌드된 `libhwp_ffi.a`가 `libs/`에 포함되어 있어, 일반적인 경우 Rust 라이브러리를 다시 빌드할 필요는 없습니다.
+
+## 릴리스 빌드 (서명·공증·DMG)
+
+전체 릴리스 파이프라인이 `scripts/release.sh`로 자동화되어 있습니다.
 
 ```bash
-qlmanage -r
-qlmanage -r cache
+bash scripts/release.sh
 ```
 
-## Testing
+수행 단계:
+1. Xcode Release 빌드
+2. `.app` 공증 제출 → Accepted → staple
+3. `hdiutil`로 DMG 생성 (`/Applications` 심볼릭링크 포함)
+4. DMG Developer ID 서명 (secure timestamp)
+5. DMG 공증 → staple → `spctl` 검증
+
+산출물: `build/HWPQuickLook-vX.Y.Z.dmg`
+
+### 최초 1회 셋업
+
+`notarytool` 키체인 프로필을 미리 저장해 두어야 합니다.
 
 ```bash
-qlmanage -p ~/path/to/file.hwp
+xcrun notarytool store-credentials "HWPQuickLook" \
+  --apple-id <your-apple-id> \
+  --team-id <your-team-id> \
+  --password <app-specific-password>
 ```
 
-## Rebuilding the Rust library
+`NOTARY_PROFILE` 환경변수로 다른 프로필 이름을 지정할 수 있습니다 (기본값: `HWPQuickLook`).
 
-Pre-built `libhwp_ffi.a`가 `libs/`에 포함되어 있으므로 일반적으로 이 과정은 필요하지 않습니다. hwp-core를 수정하거나 최신 버전으로 업데이트할 때만 필요합니다.
+## Rust 라이브러리 재빌드
 
-### Requirements
+[rhwp](https://github.com/edwardkim/rhwp) 저장소를 수정하거나 최신 버전으로 업데이트해야 할 때만 필요합니다.
+
+### 요구사항
 
 - [Rust toolchain](https://rustup.rs/)
-- [hwpjs](https://github.com/ohah/hwpjs) 저장소
+- [rhwp](https://github.com/edwardkim/rhwp) 저장소를 이 프로젝트와 같은 상위 디렉터리에 클론
 
-### Steps
+### 스크립트 사용
 
 ```bash
-# 1. hwpjs 저장소 클론 (이 프로젝트와 같은 디렉토리에)
-git clone https://github.com/ohah/hwpjs.git ../hwpjs
-
-# 2. 빌드 스크립트 실행
+git clone https://github.com/edwardkim/rhwp.git ../rhwp
 ./scripts/build-rust.sh
 ```
 
-또는 수동으로:
+### 수동 빌드
 
 ```bash
-cd ../hwpjs
-cargo build --release -p hwp-ffi
-cp target/release/libhwp_ffi.a ../hwpql/libs/
+cd ../rhwp
+cargo build --release -p rhwp-ffi
+cp target/release/librhwp_ffi.a ../hwpql/libs/libhwp_ffi.a
 ```
 
-## License
+## 프로젝트 구조
+
+```
+HWPQuickLook/              # 독립 뷰어 앱 (SwiftUI + AppKit, UTI 등록 호스트)
+├── Assets.xcassets/       # AppIcon 등 리소스
+├── AppDelegate.swift      # SwiftUI App + NSApplicationDelegate
+└── Info.plist             # UTI 선언 및 Document Types
+
+HWPPreviewer/              # Quick Look 프리뷰 익스텐션 (.appex)
+├── PreviewProvider.swift  # QLPreviewProvider 구현
+└── Info.plist             # QLSupportedContentTypes
+
+HWPThumbnailer/            # Finder 썸네일 익스텐션 (.appex)
+├── ThumbnailProvider.swift
+└── Info.plist
+
+Shared/BridgingHeader.h    # Rust FFI 선언 (hwp_parse_to_html 등)
+libs/libhwp_ffi.a          # rhwp 정적 라이브러리 (pre-built, arm64+x86_64)
+
+scripts/
+├── build-rust.sh          # rhwp-ffi 크레이트 빌드
+├── make-icon.swift        # 앱 아이콘 프로그래매틱 생성 (CoreGraphics)
+└── release.sh             # 릴리스 파이프라인 (서명·공증·DMG)
+```
+
+## 테스트 & 문제 해결
+
+### 프리뷰·썸네일 수동 검증
+
+```bash
+# Quick Look 프리뷰
+qlmanage -p ~/path/to/file.hwp
+
+# 썸네일 (모던 QLThumbnailProvider 강제 호출에는 -x 필요)
+qlmanage -t -x -s 512 -o /tmp ~/path/to/file.hwp
+```
+
+Finder에서는 `-x` 없이도 자동으로 익스텐션이 호출됩니다.
+
+### 설치 후 Finder에서 변경이 안 보일 때
+
+Launch Services / Quick Look 캐시를 재구축하고 Finder를 재시작합니다.
+
+```bash
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister \
+  -kill -r -domain local -domain system -domain user
+qlmanage -r && qlmanage -r cache
+killall Finder
+```
+
+### 한컴오피스와 UTI 충돌
+
+한컴오피스가 설치되어 있다면 동일 UTI를 소유하려고 경쟁할 수 있습니다. HWPQuickLook은 `LSHandlerRank=Owner`로 선점하지만, 한컴오피스를 제거했는데도 효과가 없으면 휴지통을 비우고 `lsregister`를 재구축하세요.
+
+## 라이선스
 
 MIT
