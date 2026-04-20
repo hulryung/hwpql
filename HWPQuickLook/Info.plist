@@ -20,21 +20,18 @@
     <string>1</string>
     <key>LSMinimumSystemVersion</key>
     <string>$(MACOSX_DEPLOYMENT_TARGET)</string>
-    <key>NSMainStoryboardFile</key>
-    <string></string>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
     <key>UTExportedTypeDeclarations</key>
     <array>
         <dict>
             <key>UTTypeIdentifier</key>
-            <string>com.hancom.hwp</string>
+            <string>com.haansoft.hancomofficeviewer.mac.hwp</string>
             <key>UTTypeDescription</key>
             <string>HWP Document</string>
             <key>UTTypeConformsTo</key>
             <array>
                 <string>public.data</string>
-                <string>public.composite-content</string>
             </array>
             <key>UTTypeTagSpecification</key>
             <dict>
@@ -50,13 +47,12 @@
         </dict>
         <dict>
             <key>UTTypeIdentifier</key>
-            <string>com.hancom.hwpx</string>
+            <string>com.haansoft.hancomofficeviewer.mac.hwpx</string>
             <key>UTTypeDescription</key>
             <string>HWPX Document</string>
             <key>UTTypeConformsTo</key>
             <array>
                 <string>public.data</string>
-                <string>public.composite-content</string>
             </array>
             <key>UTTypeTagSpecification</key>
             <dict>
@@ -75,11 +71,16 @@
             <key>CFBundleTypeRole</key>
             <string>Viewer</string>
             <key>LSHandlerRank</key>
-            <string>Default</string>
+            <string>Owner</string>
+            <key>CFBundleTypeExtensions</key>
+            <array>
+                <string>hwp</string>
+                <string>hwpx</string>
+            </array>
             <key>LSItemContentTypes</key>
             <array>
-                <string>com.hancom.hwp</string>
-                <string>com.hancom.hwpx</string>
+                <string>com.haansoft.hancomofficeviewer.mac.hwp</string>
+                <string>com.haansoft.hancomofficeviewer.mac.hwpx</string>
             </array>
         </dict>
     </array>
