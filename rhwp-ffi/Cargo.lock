@@ -550,8 +550,8 @@ dependencies = [
 
 [[package]]
 name = "rhwp"
-version = "0.7.3"
-source = "git+https://github.com/edwardkim/rhwp.git?rev=b3ca2589aa0c389787ddedd6585bf4f532ef18c6#b3ca2589aa0c389787ddedd6585bf4f532ef18c6"
+version = "0.7.7"
+source = "git+https://github.com/edwardkim/rhwp.git?rev=033617e23847982135c02091a62f55031a3817b5#033617e23847982135c02091a62f55031a3817b5"
 dependencies = [
  "base64",
  "byteorder",
@@ -561,6 +561,7 @@ dependencies = [
  "embedded-io",
  "encoding_rs",
  "flate2",
+ "image",
  "js-sys",
  "paste",
  "pdf-writer",
