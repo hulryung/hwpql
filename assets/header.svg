@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" width="1200" height="320" role="img" aria-label="HWPQuickLook — macOS Quick Look + Viewer for HWP / HWPX">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#1b2740"/>
+    </linearGradient>
+    <linearGradient id="doc" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e6ecf5"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#5eead4"/>
+      <stop offset="1" stop-color="#60a5fa"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="320" rx="18" fill="url(#bg)"/>
+
+  <g opacity="0.10" stroke="#7dd3fc" stroke-width="1" fill="none">
+    <path d="M0 260 Q 300 220 600 260 T 1200 260"/>
+    <path d="M0 290 Q 300 250 600 290 T 1200 290"/>
+  </g>
+
+  <g transform="translate(96 70)">
+    <rect x="14" y="14" width="180" height="220" rx="10" fill="#000" opacity="0.35" filter="url(#soft)"/>
+    <rect x="0" y="0" width="180" height="220" rx="10" fill="url(#doc)"/>
+    <path d="M148 0 L180 32 L148 32 Z" fill="#cbd5e1"/>
+
+    <g font-family="-apple-system, system-ui, 'SF Pro Display', sans-serif" font-weight="800" fill="#0f172a">
+      <text x="20" y="58" font-size="38" letter-spacing="2">HWP</text>
+    </g>
+
+    <g stroke="#cbd5e1" stroke-width="6" stroke-linecap="round">
+      <line x1="20" y1="92" x2="160" y2="92"/>
+      <line x1="20" y1="112" x2="160" y2="112"/>
+      <line x1="20" y1="132" x2="120" y2="132"/>
+    </g>
+    <rect x="20" y="156" width="140" height="44" rx="4" fill="#e2e8f0"/>
+    <rect x="20" y="156" width="140" height="44" rx="4" fill="url(#accent)" opacity="0.25"/>
+
+    <g transform="translate(118 124)">
+      <circle cx="0" cy="0" r="46" fill="#0f172a" opacity="0.15"/>
+      <circle cx="0" cy="0" r="46" fill="none" stroke="url(#accent)" stroke-width="8"/>
+      <line x1="33" y1="33" x2="68" y2="68" stroke="url(#accent)" stroke-width="12" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <g transform="translate(360 0)" font-family="-apple-system, system-ui, 'SF Pro Display', 'Helvetica Neue', sans-serif" fill="#f8fafc">
+    <text x="0" y="138" font-size="76" font-weight="800" letter-spacing="-1">
+      HWP<tspan fill="url(#accent)">QuickLook</tspan>
+    </text>
+    <text x="2" y="186" font-size="22" font-weight="500" fill="#cbd5e1" letter-spacing="0.3">
+      Native macOS Quick Look &amp; Viewer for HWP / HWPX
+    </text>
+
+    <g transform="translate(0 220)" font-size="14" font-weight="600">
+      <g>
+        <rect x="0" y="0" width="118" height="30" rx="15" fill="#0f172a" stroke="#334155"/>
+        <text x="59" y="20" text-anchor="middle" fill="#e2e8f0">Quick Look</text>
+      </g>
+      <g transform="translate(130 0)">
+        <rect x="0" y="0" width="118" height="30" rx="15" fill="#0f172a" stroke="#334155"/>
+        <text x="59" y="20" text-anchor="middle" fill="#e2e8f0">Thumbnails</text>
+      </g>
+      <g transform="translate(260 0)">
+        <rect x="0" y="0" width="118" height="30" rx="15" fill="#0f172a" stroke="#334155"/>
+        <text x="59" y="20" text-anchor="middle" fill="#e2e8f0">Viewer App</text>
+      </g>
+      <g transform="translate(390 0)">
+        <rect x="0" y="0" width="150" height="30" rx="15" fill="#0f172a" stroke="#334155"/>
+        <text x="75" y="20" text-anchor="middle" fill="#e2e8f0">Rust + Swift FFI</text>
+      </g>
+    </g>
+  </g>
+</svg>

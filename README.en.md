@@ -1,5 +1,7 @@
 # HWPQuickLook
 
+![HWPQuickLook](assets/header.svg)
+
 [한국어 버전](README.md)
 
 A macOS **Quick Look plugin + standalone viewer app** for natively previewing Korean HWP documents. Select a `.hwp` or `.hwpx` file in Finder and press Space to render it instantly; double-click to open it in a dedicated window. Works without Hancom Office installed.

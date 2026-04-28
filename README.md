@@ -1,5 +1,7 @@
 # HWPQuickLook
 
+![HWPQuickLook](assets/header.svg)
+
 [English version](README.en.md)
 
 macOS에서 한글(HWP) 문서를 네이티브로 미리보기 할 수 있는 **Quick Look 플러그인 + 독립 뷰어 앱**입니다. Finder에서 `.hwp` / `.hwpx` 파일을 선택하고 스페이스바를 누르면 바로 내용이 렌더링되며, 파일을 더블클릭하면 별도 창에서 열어볼 수도 있습니다. 한컴오피스 설치 없이 동작합니다.
