@@ -57,6 +57,13 @@ pub extern "C" fn hwp_parse_to_html(
 body {{ margin: 0; padding: 20px; background: #eee; display: flex; flex-direction: column; align-items: center; gap: 20px; }}
 .page {{ background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }}
 .page svg {{ display: block; max-width: 100%; height: auto; }}
+@page {{ size: A4; margin: 0; }}
+@media print {{
+  body {{ margin: 0; padding: 0; background: white; display: block; gap: 0; }}
+  .page {{ box-shadow: none; page-break-after: always; break-after: page; }}
+  .page:last-child {{ page-break-after: auto; break-after: auto; }}
+  .page svg {{ max-width: none; width: 100%; height: auto; }}
+}}
 </style></head><body>
 {}
 </body></html>"#,

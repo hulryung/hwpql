@@ -430,6 +430,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
 
 [[package]]
+name = "pcx"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dffa08d8cdb97709f15a9cf1bc0edd439a96e8c1d05687272b430b7a3cd8a64b"
+dependencies = [
+ "byteorder",
+]
+
+[[package]]
 name = "pdf-writer"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -550,8 +559,8 @@ dependencies = [
 
 [[package]]
 name = "rhwp"
-version = "0.7.7"
-source = "git+https://github.com/edwardkim/rhwp.git?rev=033617e23847982135c02091a62f55031a3817b5#033617e23847982135c02091a62f55031a3817b5"
+version = "0.7.10"
+source = "git+https://github.com/edwardkim/rhwp.git?rev=62a458aa317e962cd3d0eec6096728c172d57110#62a458aa317e962cd3d0eec6096728c172d57110"
 dependencies = [
  "base64",
  "byteorder",
@@ -564,8 +573,10 @@ dependencies = [
  "image",
  "js-sys",
  "paste",
+ "pcx",
  "pdf-writer",
  "quick-xml",
+ "serde",
  "snafu",
  "strum",
  "subsetter",
@@ -627,6 +638,36 @@ name = "ryu"
 version = "1.0.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9774ba4a74de5f7b1c1451ed6cd5285a32eddb5cccb8cc655a4e50009e06477f"
+
+[[package]]
+name = "serde"
+version = "1.0.228"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9a8e94ea7f378bd32cbbd37198a4a91436180c5bb472411e48b5ec2e2124ae9e"
+dependencies = [
+ "serde_core",
+ "serde_derive",
+]
+
+[[package]]
+name = "serde_core"
+version = "1.0.228"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "41d385c7d4ca58e59fc732af25c3983b67ac852c1a25000afe1175de458b67ad"
+dependencies = [
+ "serde_derive",
+]
+
+[[package]]
+name = "serde_derive"
+version = "1.0.228"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d540f220d3187173da220f885ab66608367b6574e925011a9353e4badda91d79"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
 
 [[package]]
 name = "simd-adler32"
