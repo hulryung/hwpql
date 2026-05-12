@@ -15,7 +15,10 @@ struct HWPQuickLookApp: App {
                 state: appDelegate.state,
                 openFile: { appDelegate.openFileAction(nil) },
                 openURL: { appDelegate.openHWPFile($0) },
-                printCurrent: { appDelegate.printAction(nil) }
+                printCurrent: { appDelegate.printAction(nil) },
+                zoomIn: { appDelegate.zoomIn(nil) },
+                zoomOut: { appDelegate.zoomOut(nil) },
+                actualSize: { appDelegate.actualSize(nil) }
             )
         }
     }
@@ -69,6 +72,9 @@ struct HWPCommands: Commands {
     let openFile: () -> Void
     let openURL: (URL) -> Void
     let printCurrent: () -> Void
+    let zoomIn: () -> Void
+    let zoomOut: () -> Void
+    let actualSize: () -> Void
 
     var body: some Commands {
         CommandGroup(replacing: .newItem) {
@@ -90,6 +96,14 @@ struct HWPCommands: Commands {
         CommandGroup(replacing: .printItem) {
             Button("Print…") { printCurrent() }
                 .keyboardShortcut("p", modifiers: [.command])
+        }
+        CommandMenu("View") {
+            Button("Zoom In") { zoomIn() }
+                .keyboardShortcut("=", modifiers: [.command])
+            Button("Zoom Out") { zoomOut() }
+                .keyboardShortcut("-", modifiers: [.command])
+            Button("Actual Size") { actualSize() }
+                .keyboardShortcut("0", modifiers: [.command])
         }
     }
 }
@@ -208,6 +222,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         op.runModal(for: window, delegate: nil, didRun: nil, contextInfo: nil)
     }
 
+    @objc func zoomIn(_ sender: Any?) {
+        guard let webView = currentWebView() else { NSSound.beep(); return }
+        webView.pageZoom = min(webView.pageZoom + 0.1, 3.0)
+    }
+
+    @objc func zoomOut(_ sender: Any?) {
+        guard let webView = currentWebView() else { NSSound.beep(); return }
+        webView.pageZoom = max(webView.pageZoom - 0.1, 0.25)
+    }
+
+    @objc func actualSize(_ sender: Any?) {
+        guard let webView = currentWebView() else { NSSound.beep(); return }
+        webView.pageZoom = 1.0
+    }
+
+    private func currentWebView() -> WKWebView? {
+        NSApp.keyWindow?.contentView?.subviews.compactMap { $0 as? WKWebView }.first
+    }
+
     // MARK: Windows
 
     private func showInfoWindow() {
@@ -286,7 +319,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         window.center()
         window.isReleasedWhenClosed = false
 
-        let webView = WKWebView(frame: window.contentView!.bounds)
+        let webView = ZoomableWebView(frame: window.contentView!.bounds)
         webView.autoresizingMask = [.width, .height]
         webView.loadHTMLString(htmlString, baseURL: nil)
         window.contentView?.addSubview(webView)
@@ -316,6 +349,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         alert.informativeText = message
         alert.alertStyle = .warning
         alert.runModal()
+    }
+}
+
+// MARK: - WKWebView with trackpad pinch zoom
+
+final class ZoomableWebView: WKWebView {
+    private static let minZoom: CGFloat = 0.25
+    private static let maxZoom: CGFloat = 3.0
+
+    override func magnify(with event: NSEvent) {
+        let next = pageZoom * (1.0 + event.magnification)
+        pageZoom = min(max(next, Self.minZoom), Self.maxZoom)
+    }
+
+    override func smartMagnify(with event: NSEvent) {
+        pageZoom = (pageZoom > 1.0) ? 1.0 : 1.5
     }
 }
 
