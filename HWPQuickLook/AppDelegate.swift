@@ -161,10 +161,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var viewerWindows: [NSWindow] = []
     private var infoWindow: NSWindow?
+    private var pinchMonitor: Any?
 
     // MARK: Lifecycle
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        installPinchMonitor()
         // Launch Services routes files via application(_:open:) which fires
         // BEFORE this method; the CLI-arg loop only covers direct binary invocation.
         for arg in ProcessInfo.processInfo.arguments.dropFirst() {
@@ -224,21 +226,36 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func zoomIn(_ sender: Any?) {
         guard let webView = currentWebView() else { NSSound.beep(); return }
-        webView.pageZoom = min(webView.pageZoom + 0.1, 3.0)
+        let next = min(webView.magnification + 0.1, ZoomableWebView.maxZoom)
+        webView.magnification = next
     }
 
     @objc func zoomOut(_ sender: Any?) {
         guard let webView = currentWebView() else { NSSound.beep(); return }
-        webView.pageZoom = max(webView.pageZoom - 0.1, 0.25)
+        let next = max(webView.magnification - 0.1, ZoomableWebView.minZoom)
+        webView.magnification = next
     }
 
     @objc func actualSize(_ sender: Any?) {
         guard let webView = currentWebView() else { NSSound.beep(); return }
-        webView.pageZoom = 1.0
+        webView.magnification = 1.0
     }
 
     private func currentWebView() -> WKWebView? {
         NSApp.keyWindow?.contentView?.subviews.compactMap { $0 as? WKWebView }.first
+    }
+
+    private func installPinchMonitor() {
+        pinchMonitor = NSEvent.addLocalMonitorForEvents(matching: .magnify) { [weak self] event in
+            guard let webView = self?.currentWebView(),
+                  let window = webView.window,
+                  event.window === window else { return event }
+            let viewPoint = webView.convert(event.locationInWindow, from: nil)
+            let next = webView.magnification + event.magnification
+            let clamped = min(max(next, ZoomableWebView.minZoom), ZoomableWebView.maxZoom)
+            webView.setMagnification(clamped, centeredAt: viewPoint)
+            return nil
+        }
     }
 
     // MARK: Windows
@@ -321,6 +338,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let webView = ZoomableWebView(frame: window.contentView!.bounds)
         webView.autoresizingMask = [.width, .height]
+        webView.allowsMagnification = true
         webView.loadHTMLString(htmlString, baseURL: nil)
         window.contentView?.addSubview(webView)
         window.contentView?.registerForDraggedTypes([.fileURL])
@@ -355,17 +373,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 // MARK: - WKWebView with trackpad pinch zoom
 
 final class ZoomableWebView: WKWebView {
-    private static let minZoom: CGFloat = 0.25
-    private static let maxZoom: CGFloat = 3.0
-
-    override func magnify(with event: NSEvent) {
-        let next = pageZoom * (1.0 + event.magnification)
-        pageZoom = min(max(next, Self.minZoom), Self.maxZoom)
-    }
-
-    override func smartMagnify(with event: NSEvent) {
-        pageZoom = (pageZoom > 1.0) ? 1.0 : 1.5
-    }
+    static let minZoom: CGFloat = 0.25
+    static let maxZoom: CGFloat = 3.0
 }
 
 private enum HWPError: Error, LocalizedError {
