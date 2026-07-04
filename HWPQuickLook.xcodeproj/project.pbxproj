@@ -16,6 +16,9 @@
 		A1000040 /* libhwp_ffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2000040 /* libhwp_ffi.a */; };
 		A1000041 /* libhwp_ffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2000040 /* libhwp_ffi.a */; };
 		A1000042 /* libhwp_ffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2000040 /* libhwp_ffi.a */; };
+		A1000050 /* HWPLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000050 /* HWPLibrary.swift */; };
+		A1000051 /* HWPLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000050 /* HWPLibrary.swift */; };
+		A1000052 /* HWPLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000050 /* HWPLibrary.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +66,7 @@
 		A2000022 /* HWPThumbnailer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HWPThumbnailer.entitlements; sourceTree = "<group>"; };
 		A2000030 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
 		A2000040 /* libhwp_ffi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libhwp_ffi.a; sourceTree = "<group>"; };
+		A2000050 /* HWPLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HWPLibrary.swift; sourceTree = "<group>"; };
 		A3000001 /* HWPQuickLook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HWPQuickLook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3000010 /* HWPPreviewer.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HWPPreviewer.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3000020 /* HWPThumbnailer.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HWPThumbnailer.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -143,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				A2000030 /* BridgingHeader.h */,
+				A2000050 /* HWPLibrary.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -278,6 +283,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1000001 /* AppDelegate.swift in Sources */,
+				A1000050 /* HWPLibrary.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -286,6 +292,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1000010 /* PreviewProvider.swift in Sources */,
+				A1000051 /* HWPLibrary.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,6 +301,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1000020 /* ThumbnailProvider.swift in Sources */,
+				A1000052 /* HWPLibrary.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -404,7 +412,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/libs",
 				);
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hwpql.HWPQuickLook;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -435,7 +443,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/libs",
 				);
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hwpql.HWPQuickLook;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -463,7 +471,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/libs",
 				);
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hwpql.HWPQuickLook.HWPPreviewer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -492,7 +500,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/libs",
 				);
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hwpql.HWPQuickLook.HWPPreviewer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -521,7 +529,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/libs",
 				);
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hwpql.HWPQuickLook.HWPThumbnailer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -550,7 +558,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/libs",
 				);
-				MARKETING_VERSION = 0.2.0;
+				MARKETING_VERSION = 0.5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hwpql.HWPQuickLook.HWPThumbnailer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

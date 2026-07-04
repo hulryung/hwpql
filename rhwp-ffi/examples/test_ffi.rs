@@ -50,6 +50,23 @@ body {{ margin: 0; padding: 20px; background: #eee; display: flex; flex-directio
     std::fs::write(out_path, &html).expect("Failed to write HTML");
     println!("\nHTML written to {} ({} bytes)", out_path, html.len());
 
+    // PDF export (whole document, same logic as hwp_render_pdf with page_num < 0)
+    println!("\n--- PDF ---");
+    match core.render_document_pdf_native() {
+        Ok(pdf) => {
+            let pdf_path = "/tmp/hwpql-preview.pdf";
+            std::fs::write(pdf_path, &pdf).expect("Failed to write PDF");
+            let header_ok = pdf.starts_with(b"%PDF-");
+            println!(
+                "PDF written to {} ({} bytes, header={})",
+                pdf_path,
+                pdf.len(),
+                if header_ok { "%PDF- ok" } else { "MISSING %PDF- HEADER" }
+            );
+        }
+        Err(e) => eprintln!("PDF render error: {:?}", e),
+    }
+
     // Thumbnail
     println!("\n--- Thumbnail ---");
     match rhwp::parser::extract_thumbnail_only(&data) {

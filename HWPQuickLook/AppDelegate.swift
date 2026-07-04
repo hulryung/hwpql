@@ -1,6 +1,7 @@
 import SwiftUI
 import UniformTypeIdentifiers
 import WebKit
+import PDFKit
 
 @main
 struct HWPQuickLookApp: App {
@@ -15,6 +16,7 @@ struct HWPQuickLookApp: App {
                 state: appDelegate.state,
                 openFile: { appDelegate.openFileAction(nil) },
                 openURL: { appDelegate.openHWPFile($0) },
+                exportPDF: { appDelegate.exportPDFAction(nil) },
                 printCurrent: { appDelegate.printAction(nil) },
                 zoomIn: { appDelegate.zoomIn(nil) },
                 zoomOut: { appDelegate.zoomOut(nil) },
@@ -71,6 +73,7 @@ struct HWPCommands: Commands {
     @ObservedObject var state: AppState
     let openFile: () -> Void
     let openURL: (URL) -> Void
+    let exportPDF: () -> Void
     let printCurrent: () -> Void
     let zoomIn: () -> Void
     let zoomOut: () -> Void
@@ -94,6 +97,8 @@ struct HWPCommands: Commands {
             }
         }
         CommandGroup(replacing: .printItem) {
+            Button("Export as PDF…") { exportPDF() }
+                .keyboardShortcut("e", modifiers: [.command, .shift])
             Button("Print…") { printCurrent() }
                 .keyboardShortcut("p", modifiers: [.command])
         }
@@ -115,6 +120,11 @@ struct InfoView: View {
 
     @State private var isTargeted = false
 
+    private var versionText: String {
+        let shortVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+        return "v\(shortVersion) · rhwp \(HWPLibrary.rhwpVersion)"
+    }
+
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "doc.text.magnifyingglass")
@@ -125,6 +135,9 @@ struct InfoView: View {
                 .fontWeight(.semibold)
             Text("Preview .hwp and .hwpx files in Finder.\nSelect a file and press Space, or drop a file here to open.")
                 .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
+            Text(versionText)
+                .font(.caption)
                 .foregroundStyle(.secondary)
         }
         .padding(40)
@@ -213,12 +226,63 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         for url in panel.urls { openHWPFile(url) }
     }
 
+    @objc func exportPDFAction(_ sender: Any?) {
+        guard let window = NSApp.keyWindow as? DocumentWindow, let fileURL = window.fileURL else {
+            NSSound.beep()
+            return
+        }
+
+        let panel = NSSavePanel()
+        panel.allowedContentTypes = [.pdf]
+        panel.nameFieldStringValue = fileURL.deletingPathExtension().lastPathComponent + ".pdf"
+        guard panel.runModal() == .OK, let destinationURL = panel.url else { return }
+
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            do {
+                let fileData = try Data(contentsOf: fileURL)
+                let pdfData = try HWPLibrary.renderPDF(fileData)
+                try pdfData.write(to: destinationURL)
+            } catch {
+                DispatchQueue.main.async {
+                    self?.showError("Failed to export PDF: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
     @objc func printAction(_ sender: Any?) {
         guard let window = NSApp.keyWindow,
               let webView = window.contentView?.subviews.compactMap({ $0 as? WKWebView }).first else {
             NSSound.beep()
             return
         }
+
+        guard let fileURL = (window as? DocumentWindow)?.fileURL else {
+            printWithWebView(webView, window: window)
+            return
+        }
+
+        DispatchQueue.global(qos: .userInitiated).async { [weak self, weak window, weak webView] in
+            let pdfDocument: PDFDocument? = {
+                guard let fileData = try? Data(contentsOf: fileURL),
+                      let pdfData = try? HWPLibrary.renderPDF(fileData) else { return nil }
+                return PDFDocument(data: pdfData)
+            }()
+
+            DispatchQueue.main.async {
+                guard let window else { return }
+                if let pdfDocument,
+                   let op = pdfDocument.printOperation(for: NSPrintInfo.shared, scalingMode: .pageScaleDownToFit, autoRotate: true) {
+                    op.showsPrintPanel = true
+                    op.runModal(for: window, delegate: nil, didRun: nil, contextInfo: nil)
+                } else if let webView {
+                    self?.printWithWebView(webView, window: window)
+                }
+            }
+        }
+    }
+
+    private func printWithWebView(_ webView: WKWebView, window: NSWindow) {
         let op = webView.printOperation(with: NSPrintInfo.shared)
         op.showsPrintPanel = true
         op.runModal(for: window, delegate: nil, didRun: nil, contextInfo: nil)
@@ -293,55 +357,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        let fileData: Data
-        do {
-            fileData = try Data(contentsOf: url)
-        } catch {
-            showError("Failed to read file: \(error.localizedDescription)")
-            return
-        }
-
-        let htmlString: String
-        do {
-            htmlString = try fileData.withUnsafeBytes { buffer -> String in
-                guard let base = buffer.baseAddress else {
-                    throw HWPError.invalidData
-                }
-                var outHtml: UnsafeMutablePointer<CChar>?
-                var outLen: UInt = 0
-                let result = hwp_parse_to_html(
-                    base.assumingMemoryBound(to: UInt8.self),
-                    UInt(fileData.count),
-                    &outHtml,
-                    &outLen
-                )
-                guard result == HWP_OK, let htmlPtr = outHtml else {
-                    throw HWPError.parseFailed(code: result)
-                }
-                defer { hwp_free_string(htmlPtr) }
-                return String(cString: htmlPtr)
-            }
-        } catch {
-            showError("Failed to parse HWP file: \(error.localizedDescription)")
-            return
-        }
-
-        let window = NSWindow(
+        let window = DocumentWindow(
             contentRect: NSRect(x: 0, y: 0, width: 900, height: 1100),
             styleMask: [.titled, .closable, .miniaturizable, .resizable],
             backing: .buffered,
             defer: false
         )
         window.title = url.deletingPathExtension().lastPathComponent
+        window.fileURL = url
         window.center()
         window.isReleasedWhenClosed = false
 
-        let webView = ZoomableWebView(frame: window.contentView!.bounds)
-        webView.autoresizingMask = [.width, .height]
-        webView.allowsMagnification = true
-        webView.loadHTMLString(htmlString, baseURL: nil)
-        window.contentView?.addSubview(webView)
-        window.contentView?.registerForDraggedTypes([.fileURL])
+        let progress = NSProgressIndicator()
+        progress.style = .spinning
+        progress.isIndeterminate = true
+        progress.sizeToFit()
+        if let contentBounds = window.contentView?.bounds {
+            progress.frame.origin = CGPoint(
+                x: (contentBounds.width - progress.frame.width) / 2,
+                y: (contentBounds.height - progress.frame.height) / 2
+            )
+        }
+        progress.autoresizingMask = [.minXMargin, .maxXMargin, .minYMargin, .maxYMargin]
+        window.contentView?.addSubview(progress)
+        progress.startAnimation(nil)
 
         window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
@@ -359,6 +398,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         infoWindow?.close()
         infoWindow = nil
+
+        DispatchQueue.global(qos: .userInitiated).async { [weak self, weak window] in
+            do {
+                let fileData = try Data(contentsOf: url)
+                let htmlString = try HWPLibrary.parseToHTML(fileData)
+                DispatchQueue.main.async {
+                    guard let window else { return }
+                    progress.stopAnimation(nil)
+                    progress.removeFromSuperview()
+
+                    let webView = ZoomableWebView(frame: window.contentView!.bounds)
+                    webView.autoresizingMask = [.width, .height]
+                    webView.allowsMagnification = true
+                    webView.loadHTMLString(htmlString, baseURL: nil)
+                    window.contentView?.addSubview(webView)
+                    window.contentView?.registerForDraggedTypes([.fileURL])
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    window?.close()
+                    self?.showError("Failed to open file: \(error.localizedDescription)")
+                }
+            }
+        }
     }
 
     private func showError(_ message: String) {
@@ -370,21 +433,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
+// MARK: - Document window (remembers its source file for print/export)
+
+final class DocumentWindow: NSWindow {
+    var fileURL: URL!
+}
+
 // MARK: - WKWebView with trackpad pinch zoom
 
 final class ZoomableWebView: WKWebView {
     static let minZoom: CGFloat = 0.25
     static let maxZoom: CGFloat = 3.0
-}
-
-private enum HWPError: Error, LocalizedError {
-    case invalidData
-    case parseFailed(code: Int32)
-
-    var errorDescription: String? {
-        switch self {
-        case .invalidData: return "Invalid HWP data"
-        case .parseFailed(let code): return "HWP parse failed with code: \(code)"
-        }
-    }
 }

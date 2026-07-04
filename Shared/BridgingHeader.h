@@ -12,8 +12,7 @@
 #define HWP_ERROR_PARSE_FAILED -2
 #define HWP_ERROR_PANIC -3
 #define HWP_ERROR_NO_PREVIEW_IMAGE -4
-#define HWP_ERROR_BASE64_DECODE_FAILED -5
-#define HWP_ERROR_UNKNOWN_FORMAT -6
+#define HWP_ERROR_RENDER_FAILED -5
 
 // Parse HWP file data and convert to HTML
 int32_t hwp_parse_to_html(const uint8_t *data,
@@ -27,6 +26,13 @@ int32_t hwp_get_preview_image(const uint8_t *data,
                               uint8_t **out_data,
                               uintptr_t *out_len,
                               char **out_format);
+
+// Render HWP file data to PDF (page_num < 0: whole document, >= 0: single page)
+int32_t hwp_render_pdf(const uint8_t *data,
+                       uintptr_t data_len,
+                       int32_t page_num,
+                       uint8_t **out_data,
+                       uintptr_t *out_len);
 
 // Free a string allocated by this library
 void hwp_free_string(char *ptr);
