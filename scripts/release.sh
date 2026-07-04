@@ -29,6 +29,7 @@ rm -rf "$BUILD_DIR"
 xcodebuild -project HWPQuickLook.xcodeproj \
   -scheme HWPQuickLook -configuration Release \
   -derivedDataPath "$BUILD_DIR" \
+  -destination 'generic/platform=macOS' \
   build >/dev/null
 
 echo "== Notarizing .app =="
