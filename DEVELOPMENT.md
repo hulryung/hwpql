@@ -4,9 +4,10 @@
 
 ## 직접 빌드하기
 
-Xcode 15 이상이 필요합니다.
+Xcode 15 이상과 [Rust toolchain](https://rustup.rs/)이 필요합니다. `libs/libhwp_ffi.a`는 122 MiB로 GitHub의 100 MiB 파일 제한을 넘어 git에서 추적하지 않으므로, 클론 직후 한 번은 직접 빌드해야 합니다 (약 1분).
 
 ```bash
+./scripts/build-rust.sh
 xcodebuild -project HWPQuickLook.xcodeproj -scheme HWPQuickLook -configuration Release build
 ```
 
@@ -17,7 +18,7 @@ cp -R ~/Library/Developer/Xcode/DerivedData/HWPQuickLook-*/Build/Products/Releas
 qlmanage -r && qlmanage -r cache
 ```
 
-미리 빌드된 `libhwp_ffi.a`가 `libs/`에 포함되어 있어, 일반적인 경우 Rust 라이브러리를 다시 빌드할 필요는 없습니다.
+`libs/rhwp.lock`이 빌드에 사용된 rhwp 커밋과 산출물 sha256을 기록하므로, 같은 lock으로 빌드하면 동일한 라이브러리가 재현됩니다.
 
 ## 릴리스 빌드 (서명·공증·DMG)
 
@@ -57,7 +58,7 @@ DMG 공증이 끝나고 `gh release create`로 릴리스를 만든 뒤, `hulryun
 
 ## Rust 라이브러리 재빌드
 
-FFI 래퍼(`rhwp-ffi/` 크레이트)가 이 저장소에 포함되어 있고, rhwp는 `rhwp-ffi/Cargo.toml`에서 **특정 커밋을 git dependency로 고정**합니다. rhwp 버전 업그레이드나 FFI 인터페이스 변경 시에만 재빌드가 필요합니다.
+FFI 래퍼(`rhwp-ffi/` 크레이트)가 이 저장소에 포함되어 있고, rhwp는 `rhwp-ffi/Cargo.toml`에서 **특정 커밋을 git dependency로 고정**합니다. 클론 직후 한 번, 그리고 rhwp 버전 업그레이드나 FFI 인터페이스 변경 시마다 재빌드가 필요합니다.
 
 ### 요구사항
 
@@ -101,7 +102,7 @@ rhwp-ffi/                  # Rust FFI 래퍼 크레이트
 └── Cargo.toml             # rhwp를 git rev로 pinning
 
 libs/
-├── libhwp_ffi.a           # rhwp-ffi 정적 라이브러리 (pre-built)
+├── libhwp_ffi.a           # rhwp-ffi 정적 라이브러리 (gitignored — build-rust.sh로 생성)
 └── rhwp.lock              # 빌드 메타데이터 (commit SHA, sha256, size)
 
 scripts/

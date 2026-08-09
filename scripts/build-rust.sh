@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 FFI_DIR="$PROJECT_DIR/rhwp-ffi"
 OUTPUT_DIR="$PROJECT_DIR/libs"
-CARGO="${CARGO:-/opt/homebrew/bin/cargo}"
+CARGO="${CARGO:-$(command -v cargo || echo /opt/homebrew/bin/cargo)}"
 RUSTUP="${RUSTUP:-/opt/homebrew/opt/rustup/bin/rustup}"
 
 echo "Building rhwp-ffi static library (universal: arm64 + x86_64)..."

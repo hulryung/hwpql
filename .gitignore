@@ -14,3 +14,7 @@ build/
 test_ffi
 
 rhwp-ffi/target/
+
+# rhwp-ffi 정적 라이브러리 (122 MiB — GitHub 100 MiB 파일 제한 초과).
+# libs/rhwp.lock 이 commit/sha256 을 기록하므로 scripts/build-rust.sh 로 재현 가능.
+libs/libhwp_ffi.a
