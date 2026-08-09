@@ -8,7 +8,7 @@ import Foundation
 enum HWPLibrary {
     /// Version of the `rhwp` crate currently vendored into `libhwp_ffi.a`
     /// (see rhwp-ffi/Cargo.lock). Shown in the app's About/Info window.
-    static let rhwpVersion = "0.7.17"
+    static let rhwpVersion = "0.8.2"
 
     /// Parses raw `.hwp`/`.hwpx` file bytes into an HTML rendering of the document.
     static func parseToHTML(_ data: Data) throws -> String {

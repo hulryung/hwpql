@@ -8,4 +8,4 @@ description = "C FFI bindings for rhwp HWP parser, used by the hwpql macOS Quick
 crate-type = ["staticlib"]
 
 [dependencies]
-rhwp = { git = "https://github.com/edwardkim/rhwp.git", rev = "03351190ec35436e58cbfee0aa9278a8fdc04a59" }
+rhwp = { git = "https://github.com/edwardkim/rhwp.git", rev = "9b16aa9e23f476e2b335d7c029fc9f24a199d63c" }
