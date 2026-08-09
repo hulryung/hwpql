@@ -95,10 +95,13 @@ HWPThumbnailer/            # Finder 썸네일 익스텐션 (.appex)
 ├── ThumbnailProvider.swift
 └── Info.plist
 
-Shared/BridgingHeader.h    # Rust FFI 선언 (hwp_parse_to_html 등)
+Shared/
+├── BridgingHeader.h       # Rust FFI 선언 (hwp_parse_to_html 등)
+└── HWPLibrary.swift       # 3개 타깃 공용 FFI 래퍼 + 에러 코드 → 메시지 매핑
 
 rhwp-ffi/                  # Rust FFI 래퍼 크레이트
-├── src/lib.rs             # hwp_parse_to_html / hwp_get_preview_image 구현
+├── src/lib.rs             # hwp_parse_to_html / hwp_get_preview_image / hwp_render_pdf 구현
+├── examples/test_ffi.rs   # 파싱·PDF·썸네일 검증용 CLI (아래 "테스트" 참고)
 └── Cargo.toml             # rhwp를 git rev로 pinning
 
 libs/
@@ -124,6 +127,17 @@ qlmanage -t -x -s 512 -o /tmp ~/path/to/file.hwp
 ```
 
 Finder에서는 `-x` 없이도 자동으로 익스텐션이 호출됩니다.
+
+### FFI 렌더 검증
+
+rhwp 버전을 올린 뒤에는 Xcode 빌드 전에 FFI 경로만 따로 확인하는 편이 빠릅니다. 익스텐션과 동일한 로직으로 페이지 SVG · 전체 PDF · 썸네일을 한 번에 뽑습니다.
+
+```bash
+cd rhwp-ffi
+RUSTC="$(rustup which rustc)" cargo run --release --example test_ffi -- ~/path/to/file.hwp
+```
+
+페이지 수와 페이지별 SVG 크기, `/tmp/hwpql-preview.html`, `/tmp/hwpql-preview.pdf`(`%PDF-` 헤더 확인), 썸네일 포맷·해상도가 출력됩니다. `RUSTC`를 지정하는 이유는 `build-rust.sh` 주석을 참고하세요.
 
 ### 설치 후 Finder에서 변경이 안 보일 때
 

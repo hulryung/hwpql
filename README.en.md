@@ -12,7 +12,9 @@ A macOS **Quick Look plugin + standalone viewer app** for natively previewing Ko
 
 - **Finder Quick Look preview** — Renders `.hwp` / `.hwpx` content instantly on Space (high-quality SVG output)
 - **Finder thumbnails** — Shows preview images at icon size
-- **Standalone viewer** — Double-click opens the file in a separate window, with Open Recent · Drag & Drop · Print support
+- **Standalone viewer** — Double-click opens the file in a separate window, with Open Recent · Drag & Drop support
+- **PDF export · printing** — Export (⇧⌘E) and print (⌘P) through rhwp's native PDF renderer
+- **Zoom** — Trackpad pinch and ⌘+ / ⌘− / ⌘0 (0.25×–3.0×)
 - **Hancom-native UTI** — Claims `LSHandlerRank=Owner`, so it takes priority even when Hancom Office is installed
 - **Notarized Developer ID signing** — No Gatekeeper warnings on install or launch
 
@@ -21,7 +23,7 @@ A macOS **Quick Look plugin + standalone viewer app** for natively previewing Ko
 All HWP/HWPX parsing and page rendering is done by the Rust crate [rhwp](https://github.com/edwardkim/rhwp). This repository is a **native macOS frontend** layered on top of it:
 
 - `rhwp-ffi/` — A thin Rust wrapper that exposes rhwp through a C ABI. rhwp is pinned to a specific commit for reproducible builds.
-- The Swift side calls only two functions, `hwp_parse_to_html` and `hwp_get_preview_image`, to receive SVG-based HTML and the embedded preview image.
+- The Swift side calls only three functions — `hwp_parse_to_html`, `hwp_get_preview_image`, and `hwp_render_pdf` — to receive SVG-based HTML, the embedded preview image, and PDF output.
 - The Quick Look preview, the Finder thumbnail, and the standalone viewer all consume the same FFI output.
 
 In other words, parsing quality and coverage are determined by the rhwp version, while HWPQuickLook integrates those results into Quick Look, Finder, and a viewer window on macOS.
